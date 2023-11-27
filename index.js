@@ -1,13 +1,13 @@
 const { ethers } = require("ethers");
 const config = require("./config")
 
-// 连接到结点
+// Connect to the node
 const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
 
-// 创建钱包
+// Create wallet.
 const wallet = new ethers.Wallet(config.privateKey.trim(), provider);
 
-// 转成16进制
+// Convert to hexadecimal
 const convertToHexa = (str = '') =>{
    const res = [];
    const { length: len } = str;
@@ -18,7 +18,7 @@ const convertToHexa = (str = '') =>{
    return `0x${res.join('')}`;
 }
 
-// 获取当前账户的 nonce
+// Retrieve the current account's nonce
 async function getCurrentNonce(wallet) {
   try {
     const nonce = await wallet.getTransactionCount("pending");
@@ -30,13 +30,13 @@ async function getCurrentNonce(wallet) {
   }
 }
 
-// 获取当前主网 gas 价格
+// Retrieve the current mainnet gas price.
 async function getGasPrice() {
   const gasPrice = await provider.getGasPrice();
   return gasPrice;
 }
 
-// 获取链上实时 gasLimit
+// Fetch real-time data from the blockchain, gasLimit
 async function getGasLimit(hexData, address) {
   const gasLimit = await provider.estimateGas({
     to: address,
@@ -47,30 +47,31 @@ async function getGasLimit(hexData, address) {
   return gasLimit.toNumber();
 }
 
-// 转账交易
+// Transfer transaction
 async function sendTransaction(nonce) {
   const hexData	= convertToHexa(config.tokenJson.trim());
-  // 获取实时 gasPrice
+  // Retrieve real-time gasPrice
   const currentGasPrice = await getGasPrice();
-  // 在当前 gasPrice 上增加 一定倍数
+  // Increase by a certain multiple on the current gasPrice.
   const gasMultiple = parseInt(String(config.increaseGas * 100))
   const increasedGasPrice = currentGasPrice.div(100).mul(gasMultiple);
-  // 获取钱包地址
-  const address = await wallet.getAddress();
-  // 获取当前 gasLimit 限制
-  const gasLimit = await getGasLimit(hexData, address);
+  // Get wallet address
+  //const address = await wallet.getAddress();
+  const sendaddr = await config.sendaddr // Retrieve the sendaddr variable from config file
+  // Retrieve the current gasLimit limit
+  const gasLimit = await getGasLimit(hexData, sendaddr);
 
   const transaction = {
-    to: address,
-	// 替换为你要转账的金额
+    to: sendaddr,
+	// Replace with the amount you want to transfer.
     value: ethers.utils.parseEther("0"),
-    // 十六进制数据
+    // Hexadecimal data
     data: hexData,
-    // 设置 nonce
+    // Configure nonce
     nonce: nonce,
-    // 设置 gas 价格
+    // Set gas price
     gasPrice: increasedGasPrice,
-	// 限制gasLimit，根据当前网络转账的设置，不知道设置多少的去区块浏览器看别人转账成功的是多少	
+	// Limit gasLimit according to the current network transfer settings. If you're unsure, check a block explorer to see the successful gasLimit of others' transactions.
     gasLimit: gasLimit,
   };
 
@@ -82,7 +83,7 @@ async function sendTransaction(nonce) {
   }
 }
 
-// 发送多次交易
+// Send multiple transactions.
 async function sendTransactions() {
   const currentNonce = await getCurrentNonce(wallet);
   const gasPrice = await getGasPrice();
