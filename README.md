@@ -1,55 +1,65 @@
-# 兼容EVM链的铭文自动化Mint脚本
+# Automated Rune Mint Script Compatible with EVM Chains
 
-## 🛠 使用说明
+## 🛠 Usage Instructions
 
-### Step 1: 首先安装 nodejs
+### Step 1: Install Node.js
 
-先去 Nodejs 官网下载安装自己电脑操作系统对应的版本
+First, download and install the version of Node.js that corresponds to your computer's operating system from the Node.js official website:
 
 ```bash
 https://nodejs.org/en
 ```
 
-然后看一下安装的版本，是否安装成功
+Check if the installation was successful by running:
+
 
 ```bash
 node -v
 npm -v
 ```
 
-如果你更喜欢使用 yarn 则安装 yarn
+If you prefer using Yarn, install it with:
+
 ```bash
 npm i -g yarn
 ```
 
-### Step 2: 下载脚本源代码
-先用 git clone 源代码到本地
+### Step 2: Download the Script Source Code
+
+Clone the source code to your local machine using git:
+
 ```bash
 git clone https://github.com/sfter/evm-inscription-mint.git
 
 cd evm-inscription-mint
 ```
-如果是 Windows 电脑没有安装 git，先去下面网站下载安装 git 软件
+If you are using a Windows computer and don't have Git installed, download and install Git from the following website:
+
 ```bash
 https://gitforwindows.org
 ```
 
-### Step 3: 修改当前目录下的 config.js 配置文件
+### Step 3: Modify the config.js Configuration File in the Current Directory
+
 ```javascript
 const config = {
-    // 你想要打多少张，这里就设置多少，建议单次别超过 50，不然容易不上链
+    // Set the number you want to mint here. It is recommended not to exceed 50 at a time, otherwise it may not be successfully recorded on the chain.
+
     repeatCount: 1,
 
-    // 在当前的 gas 基础上增加多少倍
+    // Increase by how many times on the current gas base.
     increaseGas: 1.2,
 
-    // 你钱包的私钥
+    //  Your wallet's private key.
     privateKey: "",
 
-    // 铭文json数据（替换成你想打的铭文json格式数据）
+    // Walllet to send inscribe tx to
+    sendaddr:"",
+
+    // JSON data (replace with the JSON-formatted data of the runes you want to inscribe).
     tokenJson: 'data:,{"p":"fair-20","op":"mint","tick":"fair","amt":"1000"}',
 
-    // RPC结点（兼容 evm 链都行）打哪条链就用哪条链的节点地址
+    //  RPC node (compatible with any EVM chain). Use the node address of the chain you want to interact with.
     // eth =>  https://mainnet.infura.io/v3
     // arb => https://arb1.arbitrum.io/rpc
     // polygon => https://polygon-rpc.com
@@ -61,7 +71,8 @@ const config = {
 }
 ```
 
-### Step 4: 安装依赖包
+### Step 4: Install Dependencies
+
 ```bash
 npm i
 ```
@@ -70,7 +81,7 @@ or
 yarn install
 ```
 
-### Step 5: 运行 Mint 脚本程序
+Step 5: Run the Mint Script Program
 ```shell
 node index.js
 ```
